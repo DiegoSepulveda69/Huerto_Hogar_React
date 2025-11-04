@@ -36,8 +36,12 @@ function NavBarra() {
             <LinkContainer to="/productos"> 
               <Nav.Link>Productos</Nav.Link>
             </LinkContainer>
-            <Nav.Link href="#action3">Nosotros</Nav.Link>
-            <Nav.Link href="#action4">Blog</Nav.Link>
+            <LinkContainer to="/nosotros"> 
+              <Nav.Link>Nosotros</Nav.Link>
+            </LinkContainer>
+            <LinkContainer to="/blogs"> 
+              <Nav.Link>Blogs</Nav.Link>
+            </LinkContainer>
             <Nav.Link href="#action5">Contacto</Nav.Link>
             <NavDropdown title="Usuarios" id="navbarScrollingDropdown">
               <NavDropdown.Item href="#actionDrop1">Iniciar Sesión</NavDropdown.Item>
