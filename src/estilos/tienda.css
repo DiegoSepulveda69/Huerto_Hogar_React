@@ -1,0 +1,64 @@
+/*Fondo*/
+
+.fondo-principal {
+    background-image: url('../assets/fondo.jpg'); 
+
+    background-size: cover;
+    background-position: center;     
+    background-repeat: no-repeat;    
+    background-attachment: fixed; 
+
+    min-height: 100vh;
+    background-color: #f0f0f0; 
+}
+
+/*Estilo de NavBarra.jsx*/
+
+.navbar-huerto{
+    background-color:#2E8B57 !important;
+}
+
+.navbar-huerto a, 
+.navbar-huerto .navbar-brand {
+    color: white !important;
+}
+
+.navbar-huerto .nav-link:hover {
+    color: #2d2d2d !important;
+}
+
+.btn-outline-success {
+    background-color: #23512d;
+    color: white;
+    border-color: #ffffff;
+}
+
+.btn-outline-success:hover {
+    background-color: rgb(19, 49, 21); 
+    border-color: #112f18; 
+    color: #33784f; 
+}
+
+.navbar-huerto .dropdown-menu {
+    background-color: #333333; 
+    border: solid #444444; 
+}
+
+.navbar-huerto .dropdown-item:hover,
+.navbar-huerto .dropdown-item:focus {
+    background-color: #2E8B57; 
+    color: white;
+}
+
+/*Estilo de Footer.jsx*/
+
+.footer-huerto {
+    background-color: #2E8B57; 
+    color: white; 
+    padding: 30px 0; 
+}
+
+.footer-huerto a {
+    color: white !important;
+}
+
