@@ -37,33 +37,34 @@ function Inicio_sesion() {
         setIsLoading(true);
 
         try {
-            // 1. PETICIÓN A LA NUEVA RUTA SEGURA
+         
             const response = await axios.post('http://localhost:8080/api/v1/auth/authenticate', {
                 email: email,
                 password: password
             });
 
-            // 2. EXTRAER TOKEN Y USUARIO
+            
             const { token, usuario } = response.data;
             
-            console.log("Login exitoso. Token:", token);
+            console.log("Login exitoso. Token recibido:", token);
 
-            // 3. GUARDAR EN STORAGE (Para persistencia)
+   
             localStorage.setItem('token', token);
             localStorage.setItem('usuario', JSON.stringify(usuario));
             
-            // 4. PREPARAR DATOS PARA EL CONTEXTO
-            // Aseguramos que el rol venga en minúsculas para comparar
-            const rolUsuario = (usuario.role || 'cliente').toLowerCase();
+           
+            const rolUsuario = (usuario?.role || 'cliente').toLowerCase();
             
             const userData = { 
-                id: usuario.id,
-                nombre: usuario.nombre || 'Usuario', 
-                email: usuario.email,
-                rol: rolUsuario
+                id: usuario?.id,
+                nombre: usuario?.nombre || 'Usuario', 
+                email: usuario?.email || email,
+                rol: rolUsuario,
+                telefono: usuario?.telefono,
+                region: usuario?.region,
+                comuna: usuario?.comuna
             };
       
-            // 5. REDIRECCIÓN
             if (rolUsuario === 'admin') {
                 handleLoginSuccess(userData, '/administrador');
             } else {
@@ -74,7 +75,6 @@ function Inicio_sesion() {
             console.error("Error de login:", err);
 
             if (err.response) {
-                // Spring Security devuelve 403 Forbidden si las credenciales fallan
                 if (err.response.status === 403) {
                     setError('Correo o contraseña incorrectos.');
                 } else {
@@ -91,7 +91,6 @@ function Inicio_sesion() {
     };
 
     return (
-        // Usamos 'login-container' para respetar el CSS que arregla el navbar
         <div className="login-container">
             
             <form className="formulario p-4 rounded shadow" onSubmit={handleSubmit} style={{ width: '350px', background: '#fff' }}>
@@ -149,7 +148,6 @@ function Inicio_sesion() {
 }
 
 export default Inicio_sesion;
-
 
 
 

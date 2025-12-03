@@ -7,14 +7,14 @@ function AdminDashboard() {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    // Limpiamos el usuario del contexto para cerrar sesión
+    localStorage.removeItem('token');
+    localStorage.removeItem('usuario');
     setUsuarioLogueado(null);
     navigate('/inicio_sesion');
   };
 
   return (
     <div className="admin-layout">
-      {/* --- BARRA LATERAL (SIDEBAR) --- */}
       <aside className="admin-sidebar">
         <div className="sidebar-header">
           <h3>Huerto Hogar</h3>
@@ -22,13 +22,26 @@ function AdminDashboard() {
         </div>
 
         <nav className="sidebar-menu">
-          {/* Enlaces de navegación lateral */}
-          <Link to="/administrador" className="menu-item active">📊 Dashboard</Link>
-          <Link to="/admin/ordenes" className="menu-item">🛒 Órdenes</Link>
-          <Link to="/admin/agregar-producto" className="menu-item">📦 Productos</Link>
-          <Link to="/admin/categorias" className="menu-item">🏷️ Categorías</Link>
-          <Link to="/admin/usuarios" className="menu-item">👥 Usuarios</Link>
-          <Link to="/admin/reportes" className="menu-item">📈 Reportes</Link>
+          <Link to="/administrador" className="menu-item active">
+            <span>📊</span> Dashboard
+          </Link>
+          <Link to="/admin/ordenes" className="menu-item">
+            <span>🛒</span> Órdenes
+          </Link>
+          <Link to="/admin/agregar-producto" className="menu-item">
+            <span>📦</span> Agregar Producto
+          </Link>
+          <Link to="/admin/categorias" className="menu-item">
+            <span>🏷️</span> Categorías
+          </Link>
+          <Link to="/admin/usuarios" className="menu-item">
+            <span>👥</span> Usuarios
+          </Link>
+          
+          <Link to="/admin/productos/gestionar" className="menu-item">
+            <span>📝</span> Gestionar Productos
+          </Link>
+          
         </nav>
 
         <div className="sidebar-footer">
@@ -37,14 +50,12 @@ function AdminDashboard() {
         </div>
       </aside>
 
-      {/* --- CONTENIDO PRINCIPAL (DERECHA) --- */}
       <main className="admin-content">
         <header className="admin-header">
             <h2>Dashboard</h2>
             <p className="text-muted">Resumen de las actividades diarias</p>
         </header>
 
-        {/* 1. TARJETAS DE ESTADÍSTICAS (Las de colores) */}
         <section className="stats-grid">
             <div className="stat-card blue">
                 <div className="stat-icon">🛒</div>
@@ -74,7 +85,6 @@ function AdminDashboard() {
             </div>
         </section>
 
-        {/* 2. TARJETAS DE ACCESO RÁPIDO (Las blancas) */}
         <section className="quick-links-grid">
             <Link to="/administrador" className="quick-card">
                 <span className="icon">📊</span>
@@ -90,17 +100,17 @@ function AdminDashboard() {
 
             <Link to="/admin/agregar-producto" className="quick-card">
                 <span className="icon">📦</span>
-                <h4>Productos</h4>
-                <p>Administrar inventario y detalles.</p>
+                <h4>Agregar Producto</h4>
+                <p>Añadir nuevos artículos al inventario.</p>
             </Link>
 
-            <Link to="/admin/categorias" className="quick-card">
-                <span className="icon">🏷️</span>
-                <h4>Categorías</h4>
-                <p>Organizar productos para facilitar navegación.</p>
+            <Link to="/admin/productos/gestionar" className="quick-card">
+                <span className="icon">📝</span>
+                <h4>Gestionar Productos</h4>
+                <p>Editar, eliminar y revisar el catálogo completo.</p>
             </Link>
-
-             <Link to="/admin/usuarios" className="quick-card">
+             
+            <Link to="/admin/usuarios" className="quick-card">
                 <span className="icon">👥</span>
                 <h4>Usuarios</h4>
                 <p>Gestión de cuentas de usuario y roles.</p>

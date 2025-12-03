@@ -7,7 +7,6 @@ import Col from 'react-bootstrap/Col';
 function CompraFallida() {
     const location = useLocation();
     const navigate = useNavigate();
-    // Recuperamos los datos del intento de compra
     const orden = location.state?.orden;
 
     if (!orden) {
@@ -23,7 +22,6 @@ function CompraFallida() {
         <Container className="my-5 d-flex justify-content-center">
             <div className="bg-white p-5 shadow rounded w-100" style={{ maxWidth: '850px' }}>
                 
-                {/* ENCABEZADO DE ERROR */}
                 <div className="mb-4 border-bottom pb-4">
                     <h3 className="text-danger fw-bold mb-2">
                         <i className="bi bi-x-circle-fill me-2"></i> 
@@ -35,14 +33,13 @@ function CompraFallida() {
                         <button 
                             className="btn btn-success fw-bold px-5 py-2 shadow-sm" 
                             style={{ backgroundColor: '#198754', letterSpacing: '1px' }}
-                            onClick={() => navigate('/checkout')} // Vuelve al checkout para intentar de nuevo
+                            onClick={() => navigate('/checkout')} 
                         >
                             VOLVER A REALIZAR EL PAGO
                         </button>
                     </div>
                 </div>
 
-                {/* DATOS DEL CLIENTE (Read Only) */}
                 <div className="bg-light p-4 rounded mb-4">
                     <Row className="mb-3">
                         <Col md={4}>
@@ -87,7 +84,6 @@ function CompraFallida() {
                     </div>
                 </div>
 
-                {/* TABLA DE PRODUCTOS */}
                 <div className="table-responsive mb-4">
                     <table className="table align-middle">
                         <thead className="table-light">
@@ -119,7 +115,6 @@ function CompraFallida() {
                     </table>
                 </div>
 
-                {/* TOTAL */}
                 <div className="bg-white border rounded p-3 text-center shadow-sm">
                     <h3 className="m-0 fw-bold text-dark">Total a pagar: $ {orden.total}</h3>
                 </div>

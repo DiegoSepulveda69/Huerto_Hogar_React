@@ -5,7 +5,6 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
-// 1. Definimos las categorías estáticas (Simulación)
 const CATEGORIAS_LISTA = [
     { id: 'todos', nombre: 'Todas', icono: '🌟' },
     { id: 'frutas', nombre: 'Frutas', icono: '🍎' },
@@ -16,17 +15,16 @@ const CATEGORIAS_LISTA = [
 
 function Categorias() {
     const [productos, setProductos] = useState([]);
-    const [filtro, setFiltro] = useState('todos'); // Categoría seleccionada
-    const [busqueda, setBusqueda] = useState(''); // Barra de búsqueda
+    const [filtro, setFiltro] = useState('todos'); 
+    const [busqueda, setBusqueda] = useState(''); 
     const [loading, setLoading] = useState(true);
     
     const { agregarACarrito } = useContext(AppContext);
 
-    // 2. Cargar productos del Backend
     useEffect(() => {
         const fetchProductos = async () => {
             try {
-                const res = await axios.get('http://localhost:8080/api/productos/all');
+                const res = await axios.get('http://localhost:8080/api/productos');
                 setProductos(res.data);
             } catch (error) {
                 console.error("Error cargando productos", error);

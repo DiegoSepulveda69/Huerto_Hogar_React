@@ -21,6 +21,9 @@ import Categorias from './pages/tienda/Categorias.jsx';
 // --- IMPORTS DE PÁGINAS DE ADMINISTRADOR ---
 import AdminDashboard from './pages/tienda/AdminDashboard.jsx';
 import AdminProductos from './pages/tienda/AdminProductos.jsx';
+import AdminOrdenes from './pages/tienda/AdminOrdenes.jsx';
+import AdminGestionProductos from './pages/tienda/AdminGestionProductos.jsx';
+import AdminUsuarios from './pages/tienda/AdminUsuarios.jsx';
 
 // --- CONTEXTO Y ROUTER ---
 import { AppContextProvider } from './context/AppContextProvider.jsx';
@@ -67,6 +70,9 @@ const MainApp = () => {
           {/* --- RUTAS DE ADMINISTRADOR --- */}
           <Route path="/administrador" element={<AdminDashboard/>} />
           <Route path="/admin/agregar-producto" element={<AdminProductos/>} />
+          <Route path="/admin/ordenes" element={<AdminOrdenes/>} />
+          <Route path="/admin/productos/gestionar" element={<AdminGestionProductos/>} />
+          <Route path="/admin/usuarios" element={<AdminUsuarios/>} />
         </Routes>
       </div>
       

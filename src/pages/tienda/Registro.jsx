@@ -1,11 +1,10 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { AppContext } from '../../context/AppContextProvider'; // Importamos el contexto para actualizar el usuario al instante
+import { AppContext } from '../../context/AppContextProvider'; 
 
 const MIN_PASSWORD_LENGTH = 8; 
 
-// Datos de regiones para el select
 const REGIONES_DATA = {
     "Arica y Parinacota": ["Arica", "Camarones", "Putre", "General Lagos"],
     "Tarapacá": ["Iquique", "Alto Hospicio", "Pozo Almonte", "Camiña", "Colchane", "Huara", "Pica"],
@@ -41,7 +40,7 @@ function Registro() {
     const [isLoading, setIsLoading] = useState(false);
     
     const navigate = useNavigate();
-    const { setUsuarioLogueado } = useContext(AppContext); // Usamos el contexto para auto-login
+    const { setUsuarioLogueado } = useContext(AppContext); 
 
     useEffect(() => {
         document.body.classList.add('registro');
@@ -72,7 +71,6 @@ function Registro() {
         setSuccess('');
         setIsLoading(true);
 
-        // --- VALIDACIONES DEL FRONTEND ---
         if (formData.email !== formData.confirmEmail) {
             setError('Los correos electrónicos no coinciden.');
             setIsLoading(false); return;
@@ -87,38 +85,37 @@ function Registro() {
         }
 
         try {
-            // Objeto limpio para el backend
-            // Nota: El backend "estricto" solo recibe nombre, email y password.
-            // Si quieres guardar telefono/region, deberás actualizar tu RegisterRequest.java en Java.
             const usuarioParaBackend = {
                 nombre: formData.nombre,
                 email: formData.email,
-                password: formData.password
+                password: formData.password,
+                telefono: formData.telefono, 
+                region: formData.region,
+                comuna: formData.comuna
             };
 
-            // 1. PETICIÓN A LA NUEVA RUTA DE REGISTRO SEGURA
             const response = await axios.post('http://localhost:8080/api/v1/auth/register', usuarioParaBackend);
 
-            // 2. AUTO-LOGIN: La respuesta ya trae el Token y el Usuario
             const { token, usuario } = response.data;
 
-            // Guardamos sesión
             localStorage.setItem('token', token);
             localStorage.setItem('usuario', JSON.stringify(usuario));
             
-            // Actualizamos contexto global
-            const rolUsuario = (usuario.role || 'cliente').toLowerCase();
+            const rolUsuario = (usuario?.role || 'cliente').toLowerCase();
+            
             const userData = { 
-                id: usuario.id,
-                nombre: usuario.nombre || 'Usuario', 
-                email: usuario.email,
-                rol: rolUsuario
+                id: usuario?.id,
+                nombre: usuario?.nombre || 'Usuario', 
+                email: usuario?.email,
+                rol: rolUsuario,
+                telefono: usuario?.telefono,
+                region: usuario?.region,
+                comuna: usuario?.comuna
             };
             setUsuarioLogueado(userData);
 
             setSuccess('¡Cuenta creada con éxito! Entrando...');
             
-            // 3. REDIRECCIÓN AL HOME (No al login, porque ya entramos)
             setTimeout(() => {
                 navigate('/'); 
             }, 1500);
@@ -126,7 +123,6 @@ function Registro() {
         } catch (err) {
             console.error("Error al registrar:", err);
             if (err.response) {
-                // Si el correo está repetido o hay otro error del backend
                 setError('Hubo un error al registrar. Es posible que el correo ya exista.');
             } else if (err.request) {
                 setError('No se pudo conectar con el servidor. Revisa si Spring Boot está encendido.');

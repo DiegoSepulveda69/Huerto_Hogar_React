@@ -1,28 +1,15 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { AppContext } from '../../context/AppContextProvider';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios'; // Necesitamos axios para hablar con el backend
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
-// Datos de Regiones para el select
 const REGIONES_DATA = {
     "Arica y Parinacota": ["Arica", "Putre"],
-    "Tarapacá": ["Iquique", "Alto Hospicio"],
-    "Antofagasta": ["Antofagasta", "Calama"],
-    "Atacama": ["Copiapó", "Caldera"],
-    "Coquimbo": ["La Serena", "Coquimbo"],
-    "Valparaíso": ["Valparaíso", "Viña del Mar", "Quilpué"],
-    "Metropolitana de Santiago": ["Santiago", "Cerrillos", "Las Condes", "Maipú", "Providencia", "Renca", "Puente Alto", "La Florida"],
-    "O'Higgins": ["Rancagua", "Pichilemu"],
-    "Maule": ["Talca", "Curicó"],
-    "Ñuble": ["Chillán"],
-    "Biobío": ["Concepción", "Talcahuano"],
-    "Araucanía": ["Temuco", "Villarrica"],
-    "Los Ríos": ["Valdivia"],
-    "Los Lagos": ["Puerto Montt", "Puerto Varas"],
-    "Aysén": ["Coyhaique"],
-    "Magallanes": ["Punta Arenas"]
+    "Metropolitana de Santiago": ["Santiago", "Cerrillos", "Las Condes", "Maipú", "Providencia", "Renca", "Puente Alto"],
+    "Valparaíso": ["Valparaíso", "Viña del Mar"]
 };
 
 function Checkout() {
@@ -37,6 +24,7 @@ function Checkout() {
   const [region, setRegion] = useState('');
   const [comuna, setComuna] = useState('');
   const [indicaciones, setIndicaciones] = useState('');
+  const [procesando, setProcesando] = useState(false); 
 
   useEffect(() => {
     if (usuarioLogueado) {
@@ -54,33 +42,46 @@ function Checkout() {
     }
   }, [usuarioLogueado]);
 
-  // Función centralizada para procesar la compra
-  const procesarCompra = (esExitosa) => {
-    // 1. Generar datos simulados de la orden
-    const numeroOrden = Math.floor(Math.random() * 1000000);
-    const codigoOrden = "ORDER" + Math.floor(Math.random() * 10000);
-
-    const datosCompra = {
-        numeroOrden,
-        codigoOrden,
+  const handlePagar = async (e) => {
+    e.preventDefault();
+    setProcesando(true); 
+    
+    const codigoOrden = "ORDER" + Math.floor(Math.random() * 1000000);
+    
+    const ordenParaBackend = {
+        codigoOrden: codigoOrden,
+        total: totalCarrito,
         cliente: { nombre, apellidos, email },
         direccion: { calle, dpto, region, comuna, indicaciones },
-        productos: carrito,
-        total: totalCarrito,
-        fecha: new Date().toLocaleDateString()
+        productos: carrito 
     };
 
-    if (esExitosa) {
-        vaciarCarrito();
-        navigate('/compra-exitosa', { state: { orden: datosCompra } });
-    } else {
-        navigate('/compra-fallida', { state: { orden: datosCompra } });
-    }
-  };
+   
+    const ordenParaVista = { 
+        ...ordenParaBackend, 
+        numeroOrden: Math.floor(Math.random() * 10000) 
+    };
 
-  const handlePagar = (e) => {
-    e.preventDefault();
-    procesarCompra(true);
+    try {
+     
+        const token = localStorage.getItem('token');
+        
+        await axios.post('http://localhost:8080/api/ordenes/crear', ordenParaBackend, {
+            headers: { Authorization: `Bearer ${token}` } 
+        });
+
+        console.log("Orden guardada en BD con éxito");
+        vaciarCarrito(); 
+        navigate('/compra-exitosa', { state: { orden: ordenParaVista } });
+
+    } catch (error) {
+        console.error("Error al procesar compra:", error);
+        
+       
+        navigate('/compra-fallida', { state: { orden: ordenParaVista } });
+    } finally {
+        setProcesando(false);
+    }
   };
 
   if (carrito.length === 0) {
@@ -125,65 +126,47 @@ function Checkout() {
         
         <form onSubmit={handlePagar}>
             <Row className="mb-3">
-                <Col md={6}>
-                    <label className="form-label small text-muted fw-bold">Nombre*</label>
-                    <input type="text" className="form-control bg-light border-0" value={nombre} onChange={e=>setNombre(e.target.value)} required />
-                </Col>
-                <Col md={6}>
-                    <label className="form-label small text-muted fw-bold">Apellidos*</label>
-                    <input type="text" className="form-control bg-light border-0" value={apellidos} onChange={e=>setApellidos(e.target.value)} required />
-                </Col>
+                <Col md={6}><label className="form-label small text-muted fw-bold">Nombre*</label><input type="text" className="form-control bg-light" value={nombre} onChange={e=>setNombre(e.target.value)} required /></Col>
+                <Col md={6}><label className="form-label small text-muted fw-bold">Apellidos*</label><input type="text" className="form-control bg-light" value={apellidos} onChange={e=>setApellidos(e.target.value)} required /></Col>
             </Row>
-            <div className="mb-4">
-                <label className="form-label small text-muted fw-bold">Correo Electrónico*</label>
-                <input type="email" className="form-control bg-light border-0" value={email} onChange={e=>setEmail(e.target.value)} required />
-            </div>
+            <div className="mb-4"><label className="form-label small text-muted fw-bold">Correo*</label><input type="email" className="form-control bg-light" value={email} onChange={e=>setEmail(e.target.value)} required /></div>
 
             <h4 className="fw-bold text-secondary mb-3 border-bottom pb-2">Dirección de entrega</h4>
             <Row className="mb-3">
-                <Col md={8}>
-                    <label className="form-label small text-muted fw-bold">Calle y Número*</label>
-                    <input type="text" className="form-control bg-light border-0" value={calle} onChange={e=>setCalle(e.target.value)} required />
-                </Col>
-                <Col md={4}>
-                    <label className="form-label small text-muted fw-bold">Depto / Casa (opcional)</label>
-                    <input type="text" className="form-control bg-light border-0" value={dpto} onChange={e=>setDpto(e.target.value)} />
-                </Col>
+                <Col md={8}><label className="form-label small text-muted fw-bold">Calle*</label><input type="text" className="form-control bg-light" value={calle} onChange={e=>setCalle(e.target.value)} required /></Col>
+                <Col md={4}><label className="form-label small text-muted fw-bold">Depto</label><input type="text" className="form-control bg-light" value={dpto} onChange={e=>setDpto(e.target.value)} /></Col>
             </Row>
 
             <Row className="mb-3">
                 <Col md={6}>
                     <label className="form-label small text-muted fw-bold">Región*</label>
-                    <select className="form-select bg-light border-0" value={region} onChange={(e) => {setRegion(e.target.value); setComuna('');}} required>
-                        <option value="">Seleccione Región</option>
+                    <select className="form-select bg-light" value={region} onChange={(e) => {setRegion(e.target.value); setComuna('');}} required>
+                        <option value="">Seleccione</option>
                         {Object.keys(REGIONES_DATA).map(r => <option key={r} value={r}>{r}</option>)}
                     </select>
                 </Col>
                 <Col md={6}>
                     <label className="form-label small text-muted fw-bold">Comuna*</label>
-                    <select className="form-select bg-light border-0" value={comuna} onChange={(e) => setComuna(e.target.value)} required disabled={!region}>
-                        <option value="">Seleccione Comuna</option>
+                    <select className="form-select bg-light" value={comuna} onChange={(e) => setComuna(e.target.value)} required disabled={!region}>
+                        <option value="">Seleccione</option>
                         {region && REGIONES_DATA[region].map(c => <option key={c} value={c}>{c}</option>)}
                     </select>
                 </Col>
             </Row>
 
             <div className="mb-4">
-                <label className="form-label small text-muted fw-bold">Indicaciones extra (opcional)</label>
-                <textarea className="form-control bg-light border-0" rows="2" value={indicaciones} onChange={e=>setIndicaciones(e.target.value)} placeholder="Ej: Dejar en conserjería..."></textarea>
+                <label className="form-label small text-muted fw-bold">Indicaciones (opcional)</label>
+                <textarea className="form-control bg-light" rows="2" value={indicaciones} onChange={e=>setIndicaciones(e.target.value)}></textarea>
             </div>
 
             <div className="d-flex justify-content-end pt-3 gap-3">
                 <button 
-                    type="button" 
-                    className="btn btn-outline-danger fw-bold border-2"
-                    onClick={() => procesarCompra(false)}
+                    type="submit" 
+                    className="btn btn-success btn-lg px-5 fw-bold shadow" 
+                    style={{backgroundColor: '#198754'}}
+                    disabled={procesando} 
                 >
-                    Simular Error ❌
-                </button>
-
-                <button type="submit" className="btn btn-success btn-lg px-5 fw-bold shadow" style={{backgroundColor: '#198754'}}>
-                    Pagar ahora ${totalCarrito} ✅
+                    {procesando ? 'Procesando...' : `Pagar ahora $${totalCarrito}`}
                 </button>
             </div>
         </form>

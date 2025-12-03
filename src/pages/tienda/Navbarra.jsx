@@ -8,16 +8,23 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import { AppContext } from '../../context/AppContextProvider';
 
-// Si tienes tu logo en la carpeta assets, importalo así:
-// import logo from '../../assets/logo.png'; 
-
 function NavBarra() {
-  const { usuarioLogueado, setUsuarioLogueado, carrito } = useContext(AppContext);
+  const { usuarioLogueado, setUsuarioLogueado, carrito, vaciarCarrito } = useContext(AppContext); 
   const navigate = useNavigate();
 
   const handleLogout = () => {
     setUsuarioLogueado(null);
-    navigate('/');
+    
+    if (vaciarCarrito) {
+        vaciarCarrito(); 
+    }
+    
+    localStorage.removeItem('token');
+    localStorage.removeItem('usuario');
+    
+    // --- CAMBIO AQUÍ: Redirigir a la página de Inicio ---
+    navigate('/'); 
+    // ----------------------------------------------------
   };
 
   const totalItems = carrito.reduce((acc, item) => acc + item.cantidad, 0);
@@ -25,13 +32,12 @@ function NavBarra() {
   return (
     <Navbar expand="lg" className="navbar-huerto shadow-sm sticky-top" variant="dark">
       <Container fluid>
-        {/* LOGO: Ajustado para ser un poco más grande (45px) */}
         <Navbar.Brand as={Link} to="/" className="fw-bold d-flex align-items-center gap-2">
             <img 
-              src="src/assets/logo_huerto_hogar.png" // Asegúrate que esta ruta sea correcta en tu proyecto
+              src="src/assets/logo_huerto_hogar.png"
               alt="Logo"
-              width="45" 
-              height="45"
+              width="50"
+              height="50"
               className="d-inline-block align-top"
               onError={(e) => { e.target.style.display = 'none'; }} 
             />
@@ -92,27 +98,24 @@ function NavBarra() {
                     </NavDropdown.Item>
                 </NavDropdown>
             ) : (
-                /* --- BOTONES PERSONALIZADOS --- */
                 <div className="d-flex gap-2">
-                    {/* Iniciar Sesión: Sin efecto hover de relleno, borde blanco fijo */}
                     <Link 
                         to="/inicio_sesion" 
                         className="btn fw-bold px-3"
                         style={{ 
-                            border: '1px solid white', 
+                            border: '1px solid rgba(255,255,255,0.8)', 
                             color: 'white',
-                            textDecoration: 'none'
+                            textDecoration: 'none',
+                            backgroundColor: 'transparent'
                         }}
                     >
                         Iniciar Sesión
                     </Link>
-                    
-                    {/* Crear Cuenta: Botón blanco con letra verde */}
                     <Link 
                         to="/registro" 
                         className="btn btn-light fw-bold px-3" 
                         style={{ 
-                            backgroundColor: '#126824ff', // Fondo blanco
+                              backgroundColor: '#126824ff', 
                             border: 'none'
                         }} 
                     >

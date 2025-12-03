@@ -6,7 +6,6 @@ import Col from 'react-bootstrap/Col';
 
 function CompraExitosa() {
     const location = useLocation();
-    // Recuperamos los datos que nos mandó Checkout
     const orden = location.state?.orden;
 
     if (!orden) {
@@ -22,7 +21,6 @@ function CompraExitosa() {
         <Container className="my-5 d-flex justify-content-center">
             <div className="bg-white p-5 shadow rounded w-100" style={{ maxWidth: '850px' }}>
                 
-                {/* Encabezado con Código */}
                 <div className="d-flex justify-content-between align-items-start mb-4">
                     <div>
                         <h2 className="text-success fw-bold">
@@ -36,7 +34,6 @@ function CompraExitosa() {
                     </div>
                 </div>
 
-                {/* Datos del Cliente (Read Only style) */}
                 <div className="bg-light p-4 rounded mb-4">
                     <Row className="mb-3">
                         <Col md={4}>
@@ -82,7 +79,6 @@ function CompraExitosa() {
                     </div>
                 </div>
 
-                {/* Tabla de Productos */}
                 <div className="table-responsive mb-4">
                     <table className="table align-middle">
                         <thead className="table-light">
@@ -114,12 +110,10 @@ function CompraExitosa() {
                     </table>
                 </div>
 
-                {/* Total Pagado */}
                 <div className="bg-white border rounded p-3 text-center mb-4 shadow-sm">
                     <h3 className="m-0 fw-bold text-dark">Total pagado: $ {orden.total}</h3>
                 </div>
 
-                {/* Botones de Acción */}
                 <div className="d-flex justify-content-center gap-3">
                     <button className="btn btn-danger fw-bold" onClick={() => window.print()}>
                         Imprimir boleta en PDF
